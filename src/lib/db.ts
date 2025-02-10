@@ -8,7 +8,18 @@ if (!MONGODB_URI) {
     );
 }
 
-let cached = global.mongoose;
+// Define the type for our cached mongoose connection
+type MongooseCache = {
+    conn: typeof mongoose | null;
+    promise: Promise<typeof mongoose> | null;
+};
+
+// Declare the global type
+declare global {
+    var mongoose: MongooseCache | undefined;
+}
+
+let cached = global.mongoose || { conn: null, promise: null };
 
 if (!cached) {
     cached = global.mongoose = { conn: null, promise: null };
