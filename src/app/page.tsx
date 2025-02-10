@@ -26,12 +26,15 @@ export default function Home() {
   }, [messages]); // Scroll when messages update
 
   const startNewChat = () => {
-    setMessages([{
-      id: Date.now(),
-      text: "Hello! I'm here to help you create a detailed job description. What position are you looking to write a description for?",
-      sender: "bot",
-    }]);
-    setIsOpen(true);
+    // Only start a new chat if there isn't an active chat
+    if (messages.length === 0) {
+      setMessages([{
+        id: Date.now(),
+        text: "Hello! I'm here to help you create a detailed job description. What position are you looking to write a description for?",
+        sender: "bot",
+      }]);
+      setIsOpen(true);
+    }
   };
 
   const endConversation = async () => {
@@ -156,7 +159,7 @@ export default function Home() {
               onClick={startNewChat}
               className="bg-blue-500 text-white px-5 py-3 rounded-full text-m font-semibold hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg"
             >
-              Write Job Description
+              Start Hiring
             </button>
           </div>
         </div>

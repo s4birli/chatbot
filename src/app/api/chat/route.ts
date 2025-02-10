@@ -18,10 +18,8 @@ export async function POST(request: Request) {
             throw new Error("SYSTEM_PROMPT is not set");
         }
 
-        // Add user message to history
         conversationHistory.push({ role: "user", content: message });
 
-        // Keep only last 10 messages to avoid token limits
         if (conversationHistory.length > 10) {
             conversationHistory = conversationHistory.slice(-10);
         }
