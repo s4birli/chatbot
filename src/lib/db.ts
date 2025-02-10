@@ -9,20 +9,29 @@ if (!MONGODB_URI) {
 }
 
 // Define the type for our cached mongoose connection
-type MongooseCache = {
+interface MongooseCache {
     conn: typeof mongoose | null;
     promise: Promise<typeof mongoose> | null;
-};
-
-// Declare the global type
-declare global {
-    var mongoose: MongooseCache | undefined;
 }
 
-let cached = global.mongoose || { conn: null, promise: null };
+// Declare the global namespace
+declare global {
+    namespace NodeJS {
+        interface Global {
+            mongoose: MongooseCache | undefined;
+        }
+    }
+}
+
+// Initialize the cached connection
+const globalWithMongoose = global as typeof globalThis & {
+    mongoose: MongooseCache | undefined;
+};
+
+let cached = globalWithMongoose.mongoose || { conn: null, promise: null };
 
 if (!cached) {
-    cached = global.mongoose = { conn: null, promise: null };
+    cached = globalWithMongoose.mongoose = { conn: null, promise: null };
 }
 
 async function connectDB() {
