@@ -14,24 +14,18 @@ interface MongooseCache {
     promise: Promise<typeof mongoose> | null;
 }
 
-// Declare the global namespace
+// Extend the global scope
 declare global {
-    namespace NodeJS {
-        interface Global {
-            mongoose: MongooseCache | undefined;
-        }
-    }
+    // eslint-disable-next-line no-var
+    var mongoose: MongooseCache | undefined;
 }
 
 // Initialize the cached connection
-const globalWithMongoose = global as typeof globalThis & {
-    mongoose: MongooseCache | undefined;
-};
-
-let cached = globalWithMongoose.mongoose || { conn: null, promise: null };
+const globalMongoose: { mongoose?: MongooseCache } = global;
+const cached: MongooseCache = globalMongoose.mongoose || { conn: null, promise: null };
 
 if (!cached) {
-    cached = globalWithMongoose.mongoose = { conn: null, promise: null };
+    globalMongoose.mongoose = { conn: null, promise: null };
 }
 
 async function connectDB() {
