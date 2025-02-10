@@ -8,9 +8,14 @@ export async function POST(request: Request) {
     try {
         const { message } = await request.json();
         const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+        const SYSTEM_PROMPT = process.env.SYSTEM_PROMPT;
 
         if (!ANTHROPIC_API_KEY) {
             throw new Error("ANTHROPIC_API_KEY is not set");
+        }
+
+        if (!SYSTEM_PROMPT) {
+            throw new Error("SYSTEM_PROMPT is not set");
         }
 
         // Add user message to history
@@ -28,7 +33,7 @@ export async function POST(request: Request) {
             {
                 model: "claude-3-sonnet-20240229",
                 max_tokens: 1024,
-                system: "You are an AI model designed to conduct comprehensive, structured, and insightful analysis with hiring managers to collect detailed information about specific jobs and write a job description. This will help in understanding how the job fits into the company, its strategy or mission or goals, job responsibilities, and performance expectations, ensuring that job descriptions are accurate and effective for recruitment, training, and performance management. You must write a job description rather than a job advert.  A job description includes all the detailed information about the job itself, including comprehensive information on the role, the responsibilities involved, more on your company and its culture, and all the nitty gritty of the what, where, who, why of the job.\n\nYou should interact with the user until you have sufficient information to write the job description, do not write it before you have enough information unless the user specifically ask you to propose a description.\n\nYou should only ask the user about one concept at a time. You can make suggestions and ask the user if they reflect their views about the job. ensure a balance between keeping the interview short and vs making too many assumptions about the job.\n\nOutput: a structured job description with the following sections as a minimum, you may add additional sections if relevant to the specific job:\n\nJob Title\nPurpose of the Role\nResponsibilities\nSkills\nQualifications",
+                system: SYSTEM_PROMPT,
                 messages: conversationHistory
             },
             {
